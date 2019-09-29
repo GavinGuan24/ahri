@@ -99,10 +99,9 @@ func (ahriSocks5Server *AhriSocks5Server) loadAddrCtxMapper(ahriHostsPath string
 }
 
 func (ahriSocks5Server *AhriSocks5Server) mapperAhriAddrName(atyp byte, byteAddr []byte) string {
-	//ahriSocks5Server.addrCtxMapperLock.Lock()
-	//defer ahriSocks5Server.addrCtxMapperLock.Unlock()
-	//return MapperAhriAddrName(atyp, byteAddr, ahriSocks5Server.addrCtxMapper)
-	return AhriAddrNameAhriServer
+	ahriSocks5Server.addrCtxMapperLock.Lock()
+	defer ahriSocks5Server.addrCtxMapperLock.Unlock()
+	return MapperAhriAddrName(atyp, byteAddr, ahriSocks5Server.addrCtxMapper)
 }
 
 func (ahriSocks5Server *AhriSocks5Server) socks5HandShakeAndMapper(conn *net.TCPConn, connId uint64) (*AhriAddr) {
