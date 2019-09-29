@@ -44,7 +44,7 @@ baidu.com L
 
 ##### 注意: 请严格遵守你所在地区的相关法律法规, 不要将 Ahri 用于违法犯罪行为; 否则后果自负, 毕竟技术无罪.
 
-![示意图](https://github.com/GavinGuan24/ahri/img/a0.jpg)
+![示意图](https://github.com/GavinGuan24/ahri/blob/master/img/a0.jpg)
 
 ## Ahri 的用法
 
