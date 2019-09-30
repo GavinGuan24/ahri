@@ -128,11 +128,11 @@ Ahri Client 与 Ahri Server 在 ARP 之后就有了一个可靠的 TCP 连接. �
 - to: 帧的终点
 - conn ID: 请求的唯一ID, 由发起者生成, 转发时不改变该值
 - payload len: 负载长度
-- payload: 负载, AFP 约定帧最大为 2048 bytes, 头部占用 16 bytes, 所以这里需要 <= 2032 bytes
+- payload: 负载, AFP 约定帧最大为 AfpFrameMaxLen bytes, 头部占用 AfpHeaderLen bytes, 所以这里至多 AfpFrameMaxLen - AfpHeaderLen bytes
 
 ##### 2.1.4.2 内容说明
 
-**Ahri Frame** 的头部 (payload 以外的部分) 仅使用 16 个字节. 
+**Ahri Frame** 的头部 (payload 以外的部分) 仅使用 AfpHeaderLen 个字节. 
 
 **protocol flag** 与 **payload len** 保证实现者能够成功的从数据流中分辨出一个个的 Ahri Frame.
 
@@ -179,7 +179,7 @@ A <- S('B')          direct
 
 **payload len** 就是说明后面的 **payload** 长度的.
 
-**payload** 就是 "应用连接" 传输的内容, AFP 约定 AF 最大 2048 bytes, 头 16 bytes, 所以 **payload** 最大 2032 bytes.
+**payload** 就是 "应用连接" 传输的内容, AFP 约定 AF 最大 AfpFrameMaxLen bytes, 头 AfpHeaderLen bytes, 所以 **payload** 最大 AfpFrameMaxLen - AfpHeaderLen bytes.
 
 
 ##### 2.1.4.3 特殊的帧

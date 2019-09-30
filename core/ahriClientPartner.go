@@ -47,7 +47,7 @@ func (partner *ahriClientPartner) stop() {
 func (partner *ahriClientPartner) loopStarter() {
 	partner.quit = make(chan int)
 	partner.receiveFrameTruck = make(chan AhriFrame)
-	partner.proxyFrameReceiver = make(chan AhriFrame, AhriClientPartnerProxyFrameBufferSize)
+	partner.proxyFrameReceiver = make(chan AhriFrame, AhriClientPartnerProxyFrameMaxSize)
 	go func() {
 		for {
 			select {

@@ -33,7 +33,7 @@ type proxyFrameTask struct {
 func (server *AhriServer) loopStarter(listener net.Listener) {
 	server.quitFlag = false
 	server.quit = make(chan int)
-	server.proxyFrameTaskReceiver = make(chan *proxyFrameTask, AhriServerProxyFrameBufferSize)
+	server.proxyFrameTaskReceiver = make(chan *proxyFrameTask, AhriServerProxyFrameMaxSize)
 	ahriConnChannel := make(chan *net.TCPConn)
 	go func() {
 		for {

@@ -10,12 +10,12 @@ const (
 	// the timeout of an AhriClient registers itself with an AhriServer.
 	AhriShakeTimeoutSec = 3
 	// the timeout of one-way communication time interval between an AhriClient and an AhriServer; AhriClient.Dial().timeout = 2 * AhriTimeoutSec
-	AhriTimeoutSec = 4
+	AhriTimeoutSec = 5
 
 	// the maximum number of proxy frames that an AhriClientPartner can save in a special golang channel.
-	AhriClientPartnerProxyFrameBufferSize = 1024
+	AhriClientPartnerProxyFrameMaxSize = 10240
 	// the maximum number of proxy frames that an AhriServer can save in a special golang channel.
-	AhriServerProxyFrameBufferSize = AhriClientPartnerProxyFrameBufferSize * 4
+	AhriServerProxyFrameMaxSize = AhriClientPartnerProxyFrameMaxSize * 20
 
 	// Addr Type
 	Socks5AddrTypeIPv4   = 0x01
