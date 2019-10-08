@@ -190,7 +190,7 @@ heartbeat: payload 为一个 0x00 字节
 
 ###### dial
 
-dial: payload 按 socks5 请求的格式填写这三个信息 ATYP DST.ADDR DST.PORT
+dial: payload 按 socks5 请求的格式填写这三个信息 ATYP, DST.ADDR, DST.PORT
 dial ack: payload 为一个字节, 0x00 表示应答成功, 0x01 表示应答失败
 
 若一定时间段内无响应, 发起者主动切断连接.

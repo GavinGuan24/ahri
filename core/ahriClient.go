@@ -115,7 +115,7 @@ func (client *AhriClient) keepConn() {
 		go client.receiverLoop()
 	} else {
 		//Check if the heartbeat of the server has timed out
-		if time.Now().Unix()-client.heartbeatUnixTimeSec > AhriTimeoutSec {
+		if time.Now().Unix()-client.heartbeatUnixTimeSec > 2 * int64(AhriTimeoutSec) {
 			go client.clearConn(client.realConnEpoch)
 			return
 		}
@@ -327,7 +327,7 @@ func (client *AhriClient) dispatcher(frame AhriFrame) {
 		select {
 		case conn.receiver <- frame:
 			needFree = false
-		case <-time.After(AhriTimeoutSec * time.Second):
+		case <-time.After(time.Duration(AhriTimeoutSec) * time.Second):
 			go conn.Close()
 		}
 		return
@@ -353,7 +353,7 @@ func (client *AhriClient) dispatcher(frame AhriFrame) {
 			select {
 			case conn.receiver <- frame:
 				needFree = false
-			case <-time.After(AhriTimeoutSec * time.Second):
+			case <-time.After(time.Duration(AhriTimeoutSec) * time.Second):
 				go conn.Close()
 			}
 			return
@@ -549,7 +549,7 @@ func (client *AhriClient) Dial(addr *AhriAddr, connId uint64) (conn *AhriConn, e
 			ahriConn.Close()
 			return nil, errors.New("failed to dial target, connection denied")
 		}
-	case <-time.After(2 * AhriTimeoutSec * time.Second):
+	case <-time.After(3 * time.Duration(AhriTimeoutSec) * time.Second):
 		ahriConn.Close()
 		return nil, errors.New("failed to dial target, connection timeout")
 	}
@@ -571,8 +571,8 @@ func NewAhriClient(serverIp, serverPort, serverPassword, clientName string, mode
 		Log.Crashf("Invalid Ahri Server port(%s)", serverPort)
 	case len(serverPassword) == 0:
 		Log.Crash("Invalid Ahri Server password(len == 0).")
-	case AhriAddrNameAhriServer == clientName, AhriAddrNameLocal == clientName, AhriAddrNameForbidden == clientName:
-		Log.Crash("'-', 'S' and 'L' are system reserved names and cannot be used.")
+	case AhriAddrNameAhriServer == clientName, AhriAddrNameLocal == clientName, AhriAddrNameForbidden == clientName, AhriAddrNameIntercept == clientName:
+		Log.Crash("'|', '-', 'S' and 'L' are system reserved names and cannot be used.")
 	case len(clientName) == 0, len(clientName) > 2:
 		Log.Crash("The client name should be between 1 and 2 in length.")
 	}

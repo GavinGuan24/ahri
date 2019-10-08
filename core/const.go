@@ -9,8 +9,6 @@ const (
 	Socks5ShakeTimeoutMillisec = 350
 	// the timeout of an AhriClient registers itself with an AhriServer.
 	AhriShakeTimeoutSec = 3
-	// the timeout of one-way communication time interval between an AhriClient and an AhriServer; AhriClient.Dial().timeout = 2 * AhriTimeoutSec
-	AhriTimeoutSec = 5
 
 	// the maximum number of proxy frames that an AhriClientPartner can save in a special golang channel.
 	AhriClientPartnerProxyFrameMaxSize = 10240
@@ -31,6 +29,7 @@ const (
 	AhriAddrNameLocal      = "L"
 	AhriAddrNameAhriServer = "S"
 	AhriAddrNameForbidden  = "-"
+	AhriAddrNameIntercept  = "|"
 
 	// ARP ACK
 	ArpAckOk                            = 0x00
@@ -64,11 +63,15 @@ const (
 )
 
 var (
-	Log         Logger = &Alog{LowLevel: LevelError}
-	Debug       Logger = Log
-	ByteArrPool        = NewByteArrPool(AfpFrameMaxLen)
+	Log         Logger
+	Debug       Logger
+	ByteArrPool = NewByteArrPool(AfpFrameMaxLen)
 
-	// Timeout
+	// the timeout of one-way communication time interval between an AhriClient and an AhriServer;
+	// AhriClient.Dial().timeout = 3 * AhriTimeoutSec
+	// heartbeat timeout = 2 * AhriTimeoutSec
+	AhriTimeoutSec int
+
 	NoDeadline = time.Time{}
 
 	// Socks5 ACK

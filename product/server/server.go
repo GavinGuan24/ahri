@@ -11,8 +11,9 @@ var server *core.AhriServer
 
 func init() {
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), `Usage: %s <server-info>
+		fmt.Fprintf(flag.CommandLine.Output(), `Usage: %s <server-info> [global-cfg]
     server-info: -ip serverIp, -p serverPort, -k serverPassword, -a rsaPrivateKey, -b rsaPublicKey
+    global-cfg: -L logLevel, -T timeoutUnitSec
 
 Parameters:
 `, os.Args[0])
@@ -23,6 +24,7 @@ Parameters:
 func main() {
 
 	var logLevel int
+	var timeoutUnit int
 
 	var serverIp string
 	var serverPort string
@@ -32,6 +34,7 @@ func main() {
 	var publicKey string
 
 	flag.IntVar(&logLevel, "L", int(core.LevelError), "the log level, 0 ~ 3 ==> debug, info, warn, error")
+	flag.IntVar(&timeoutUnit, "T", 5, "the timeout of one-way communication time interval between an AhriClient and an AhriServer;\r\nSpecial: AhriClient Dial timeout = 3T, heartbeat timeout = 2T")
 
 	flag.StringVar(&serverIp, "ip", "", "the IP of an ahri server")
 	flag.StringVar(&serverPort, "p", "", "the port of an ahri server")
@@ -51,9 +54,14 @@ func main() {
 	default:
 		logLevel = int(core.LevelError)
 	}
-
 	core.Log = &core.Alog{LowLevel: core.LogLevel(logLevel)}
 	core.Debug = core.Log
+
+	if timeoutUnit > 0 {
+		core.AhriTimeoutSec = timeoutUnit
+	} else {
+		core.AhriTimeoutSec = 5
+	}
 
 	server = core.NewAhriServer(serverIp, serverPort, serverPassword, privateKey, publicKey)
 	fmt.Printf("Ahri Server (%s) is running.\n", core.Version)

@@ -142,7 +142,7 @@ func (partner *ahriClientPartner) keepConn() {
 		return
 	}
 	//Check if the heartbeat of the client has timed out
-	if time.Now().Unix()-partner.heartbeatUnixTimeSec > AhriTimeoutSec {
+	if time.Now().Unix()-partner.heartbeatUnixTimeSec > 2 * int64(AhriTimeoutSec) {
 		go partner.stop()
 		return
 	}
@@ -310,7 +310,7 @@ func (partner *ahriClientPartner) dispatcher(frame AhriFrame) {
 			select {
 			case conn.receiver <- frame:
 				needFree = false
-			case <-time.After(AhriTimeoutSec * time.Second):
+			case <-time.After(time.Duration(AhriTimeoutSec) * time.Second):
 				go conn.Close()
 			}
 			return

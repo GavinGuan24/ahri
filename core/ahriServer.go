@@ -148,6 +148,12 @@ func (server *AhriServer) ahriHandShakeAndTryRegisteClient(conn *net.TCPConn) er
 		return errors.New("wrong password")
 	}
 
+	switch clientName {
+	case AhriAddrNameLocal, AhriAddrNameAhriServer, AhriAddrNameForbidden, AhriAddrNameIntercept:
+		conn.Write([]byte{ArpAckClientNameIsAlreadyRegistered})
+		return errors.New("client name is already registered")
+	}
+
 	switch mode {
 	case AhriClientModeTake, AhriClientModeGive, AhriClientModeTrade:
 	default:

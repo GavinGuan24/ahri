@@ -115,7 +115,7 @@ func (ahriSocks5Server *AhriSocks5Server) socks5HandShakeAndMapper(conn *net.TCP
 		Log.Infof("%v", e)
 		return nil
 	}
-	//socks5 一般使用在本机的localhost, 没必要启用密码模式; 我本来提供了对密码模式的支持, 但有各种授权弹窗, 且软件支持不好, 所以移除了.
+
 	protocolCheck := false
 	if n >= 3 && buf[0] == 0x05 && buf[1] > 0 {
 		for i := 0; i < int(buf[1]); i++ {
@@ -163,14 +163,19 @@ func (ahriSocks5Server *AhriSocks5Server) socks5HandShakeAndMapper(conn *net.TCP
 		return nil
 	}
 
-	// ========== Socks5 hand shake finished ==========
-	conn.Write(Socks5Success)
-	conn.SetDeadline(NoDeadline)
 
 	ahriAddrName := ahriSocks5Server.mapperAhriAddrName(buf[3], dstIP)
 	if AhriAddrNameForbidden == ahriAddrName {
 		ahriAddrName = AhriAddrNameLocal
 	}
+	if AhriAddrNameIntercept == ahriAddrName {
+		conn.Write(Socks5ConnectionNotAllowedByRuleset)
+		return nil
+	}
+
+	// ========== Socks5 hand shake finished ==========
+	conn.Write(Socks5Success)
+	conn.SetDeadline(NoDeadline)
 
 	port = int(BytesToUint16(buf[n-2 : n]))
 

@@ -103,7 +103,7 @@ func connJoint(connId uint64, tcpConn *net.TCPConn, ahriConn *AhriConn) {
 	for {
 		var e error
 		select {
-		case <-time.After(AhriTimeoutSec * time.Second):
+		case <-time.After(time.Duration(AhriTimeoutSec) * time.Second):
 			goto loopEnd
 		case data0 := <-dataChan0:
 			e = writeDataToConn(ahriConn, data0)

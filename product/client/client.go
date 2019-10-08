@@ -14,10 +14,11 @@ var (
 
 func init() {
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), `Usage: %s <server-info> <client-info> [socks5-cfg]
+		fmt.Fprintf(flag.CommandLine.Output(), `Usage: %s <server-info> <client-info> [socks5-cfg] [global-cfg]
     server-info: -sip serverIp, -sp serverPort, -k serverPassword
     client-info: -n clientName, -m clientMode
     socks5-cfg:  -s5ip socks5Ip, -s5p socks5Port, -f ahriHostsFile
+    global-cfg: -L logLevel, -T timeoutUnitSec
 
 Parameters:
 `, os.Args[0])
@@ -28,6 +29,7 @@ Parameters:
 func main() {
 
 	var logLevel int
+	var timeoutUnit int
 
 	var serverIp string
 	var serverPort string
@@ -41,6 +43,7 @@ func main() {
 	var ahriHostsPath string
 
 	flag.IntVar(&logLevel, "L", int(core.LevelError), "the log level, 0 ~ 3 ==> debug, info, warn, error")
+	flag.IntVar(&timeoutUnit, "T", 5, "the timeout of one-way communication time interval between an AhriClient and an AhriServer;\r\nSpecial: AhriClient Dial timeout = 3T, heartbeat timeout = 2T")
 
 	flag.StringVar(&serverIp, "sip", "", "the IP of an ahri server")
 	flag.StringVar(&serverPort, "sp", "", "the port of an ahri server")
@@ -64,9 +67,14 @@ func main() {
 	default:
 		logLevel = int(core.LevelError)
 	}
-
 	core.Log = &core.Alog{LowLevel: core.LogLevel(logLevel)}
 	core.Debug = core.Log
+
+	if timeoutUnit > 0 {
+		core.AhriTimeoutSec = timeoutUnit
+	} else {
+		core.AhriTimeoutSec = 5
+	}
 
 	client = core.NewAhriClient(serverIp, serverPort, serverPassword, clientName, clientMode)
 	socks5Server = core.NewAhriSocks5Server(socks5Ip, socks5Port, ahriHostsPath, client)
