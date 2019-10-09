@@ -1,34 +1,112 @@
 # Ahri
 
-Ahri 是一个网络环境共享工具, 从某种意义上来说可以认为 ta 是一种 VPN.
+[Ahri](https://github.com/GavinGuan24/ahri) 是一个好用且便于配置的网络环境共享工具。
+ta 基于 TCP，自行定义了应用层协议来经行流量转发，且对一个 TCP 连接多路复用。
+你可以将它理解为一个 VPN，但 ta 又不是仅是一个 VPN。
 
 ## Ahri 的使用场景
 
-1. A 公司的内网环境禁止访问 taobao.com, Ahri 可以将请求转发给服务器进行代理相应.
-2. A 公司与 B 公司的人员协作完成一项工作, 但两个公司的内网环境是不互通的, Ahri 可以将一端的请求转发给服务器, 再由服务器转发给另一端进行代理相应.
-3. 你在家无法访问公司的内网, Ahri 可以将请求转发给服务器, 服务器转发给你在公司的电脑进行代理相应.
+你一定遇到过这些令人痛苦的场景。
+
+**场景一**
+
+我是一个程序狗。我的工作内容需要使用到公司内网，但运维不靠谱，VPN 没法使用或者修改了一些配置没有及时使用邮件通知到我，或公司直接不提供 VPN。假设我已经在家了，但 Leader 告诉我有一个 BUG 需要立即处理。
+没有 VPN ，难道要我再跑到公司去处理吗？再者，我家带宽一定没有公司的带宽大，Teamviewer 用起来不卡吗？
+
+如果你是个 Java 后端，你的项目需要使用到几个中间件，而它们（包括测试用的 DB）都在公司内网。难道你要在自己电脑上安装几个中间件然后再造一些数据出来？不麻烦吗？
+
+**场景二**
+
+两家 IT 公司进行了合作，但是员工的工作内容需要用到自己公司的内网和对方公司的内网。这时怎么办呢？
+员工在家的时候也完全无法使用到双方公司的内网环境。
+
+让两家公司的运维都配置一个 OpenVPN（或者别的 VPN）？
+就算有条件，双方使用者配置起来需要各种参数，ta 不麻烦吗？
+而且部分配置冲突了需要怎么处理？
+
+**场景三**
+
+我们公司的运维对一些公网域名或 IP 进行了拦截，或者是你所在的网络环境对一些公网域名或 IP 进行了拦截。你又需要使用它们，怎么办？
+
+Ahri 适用于但不局限于上述场景，ta 可以解决这些问题。
 
 ##### 注意: 请严格遵守你所在地区的相关法律法规, 不要将 Ahri 用于违法犯罪行为(尤其是科学上网); 否则后果自负, 毕竟技术无罪.
 
+## Ahri 的工作原理
 
-## ahri-client & ahri-server
+Ahri 需要解决的问题其实是流量转发。然而并不是所有的流量都需要转发，或多次转发。
+所以，就请求的发起来说，流量的目的地有三种类型。
 
-Ahri 只有有两个二进制可执行文件, 客户端 ahri-client, 服务端 ahri-server.
+1. 本地：在本机直接 dial TCP 请求。
+2. ahri-server： 在 ahri-server 上 dial TCP 请求。
+3. 另一个 ahri-client： 在另一个 ahri-client 上 dial TCP 请求。
 
-ahri-client 会主动注册到 ahri-server, 并采用 socks5 协议转发本地 TCP 请求.
+### ahri-server & ahri-client
 
-请求的目的地有三种类型: 本地, 服务端, 另一个客户端.
-也就是说, 服务端与另一个 ahri-client 的部分网络环境可以为你所用.
+Ahri 服务由两个二进制程序来提供，它们是 ahri-server，ahri-client。
 
-ahri-client 的工作模式有三种: take(仅享受服务), give(仅提供服务), trade(前两者均可).
-所以你可以选择是否为他人提供网络服务.
+- ahri-server 负责响应来自 ahri-client 的请求，或者转发一个 ahri-client 的请求给另一个 ahri-client。
 
-ahri-client 与 ahri-server 之间采用 RSA, AES-256-CFB 加密算法保证数据的安全性, 并且多路复用一个 TCP 连接交换所有数据.
-数据均是加密的, 且帧化的, 这一点与 http 2.0 的处理方式类似.
+- ahri-client 负责发起请求，或者响应另一个 ahri-client 的请求。ta 有三个模式。
+    - take：启动一个 socks5 服务来接受本地的所有 TCP 请求；再按配置好的映射文件（ahri.hosts）决定采用上面的三种流量目的地中的哪一个。
+    - give：仅负责响应来自其他 ahri-client 的请求。
+    - trade：同时支持上面两种的模式。
 
-每一个 ahri-client 均有一个名字(最大长度为 2 的ACSII字符).
+到这里，你可能已经猜到，ahri-client 与 ahri-server 的关系是注册与管理。
+没错，ahri-client 采用主动注册到 ahri-server 的方式来进行连接。
+ahri-client 与 ahri-server 之间采用 RSA, AES-256-CFB 加密算法保证数据的安全性。
 
-每一个 ahri-client 均有一个 ahri.hosts 文件, 可以控制本地请求转发的目的地. 也可控制是否对他人提供某些域名或 IP 的转发服务.
+ahri-client 注册到 ahri-server 后，它们之间就有了一个 TCP 连接。在这个连接中会传递心跳包，数据包。
+
+至此，我们再回顾一下上面的使用场景。
+假设我本机 ahri-client 是 A，
+我使用的 ahri-server 是 S，
+我公司内网（LAN 1）中有一个 ahri-client 是 B，
+别人公司内网（LAN 2）中有一个 ahri-client 是 C。
+
+### 场景解析
+
+**场景一 & 场景二**
+
+这两个场景是最长见的 VPN 使用场景，只不过场景二略复杂一点。
+
+当我在自己家时。
+我使用自己公司的内网时，流量走向是
+A -> S -> B -> LAN 1， 然后原路返回。
+我也可以使用对方公司的内网，流量走向是
+A -> S -> C -> LAN 2， 然后原路返回。
+我也可以正常访问任何公网资源，A -> Internet。
+
+当我在自己公司，使用自己公司的内网时，流量走向是
+A -> LAN 1，然后原路返回。
+我也可以使用对方公司的内网，流量走向是
+A -> S -> C -> LAN 2， 然后原路返回。
+我也可以正常访问任何公网资源，A -> Internet。
+
+你可能会问，这两种情形下，怎么做的流量转发目的地映射？
+上面讲过了，这里有一个配置文件 ahri.hosts。后面会说到 ta 的配置方法。
+
+**场景三**
+
+对这个场景的处理其实是我在实现场景一、二的过程中顺带写出来的衍生物。
+主要就是你所在的网络环境会对一些公网资源的请求进行拦截。
+A -> Internet 这条路不通了。所以换线为 A -> S -> Internet。
+
+希望我对上面的场景的解决描述的足够清楚。
+
+然后再解释上面挖的一个坑，对一个 TCP 连接经行多路复用。
+
+### [Ahri Protocol](https://github.com/GavinGuan24/ahri/blob/master/core/ahri_protocol.md)
+
+基于 TCP ，Ahri 自行定义了一个应用层协议 [Ahri Protocol](https://github.com/GavinGuan24/ahri/blob/master/core/ahri_protocol.md)。
+ta 由 Ahri Registe Protocol 与 Ahri Frame Protocol 组成。
+
+详细的请去项目下看。这里仅说，既然协议中出现了 Frame，就表明数据是帧化的。没错，这里的工作方式类似于 HTTP 2.0 。在这样的情形下，仅使用一个 TCP 连接就可以使 ahri-client 与 ahri-server 沟通顺畅。
+
+每一个 ahri-client 均有一个名字（最大长度为 2 的ACSII字符）。
+
+每一个 ahri-client 均有一个 ahri.hosts 文件，可以控制本地请求转发的目的地。也可控制是否对他人提供某些域名或 IP 的转发服务。
+
 **其中 'S', 'L', '-', '|' 为系统保留名, 禁止使用它们对 ahri-client 命名.**
 
 
@@ -58,6 +136,16 @@ baidu.com L
 ## Ahri 的用法
 
 我已经对常用的系统完成了源码编译的工作, 你应该可以在 [releases](https://github.com/GavinGuan24/ahri/releases/tag/v0.9.1) 中找到可运行在你系统上的版本. 如果没有, 请自行从源码编译.
+
+详细参数与解释仅需要在命令行下执行对应的帮助程序
+
+```
+客户端
+ahri-client -h
+
+服务端
+ahri-server -h
+```
 
 **方法一**
 
@@ -124,7 +212,10 @@ Parameters:
 
 **方法二**
 
-如果你是 *nix 环境, 可以直接使用 start.sh / stop.sh, 使用前请修改必须的参数.
+为了降低配置难度，压缩包中已包含 start.sh，stop.sh 。
+仅需要修改必要的参数即可在 *nix 环境中使用。
+至于 Windows，参考 sh 脚本即可编写 bat 即可。
 
-如果你是 win 环境, 参考 start.sh / stop.sh 编写对应的 bat 即可.
+提示：如果 ahri-client 与 ahri-server 之间的网络环境是 **低带宽** 或 **高延迟**，请适当增大 `-T` 参数的值。
+
 
