@@ -233,7 +233,7 @@ ahri-client 可以使用最长 2 个 ASCII 字符（你就当做两个英文字�
 对于 ssh， 你可以使用 nc 来对接至 Ahri。
 
 ```
-现在本地ss监听代理是 socks5://127.0.0.1:1080
+现在本地 socks5 监听代理是 socks5://127.0.0.1:23456
 自己服务器是server.test.com
 
 修改~/.ssh/config 文件
@@ -241,10 +241,10 @@ ahri-client 可以使用最长 2 个 ASCII 字符（你就当做两个英文字�
 
 host server.test.com
 HostName server.test.com
-ProxyCommand nc -X 5 -x 127.0.0.1:1080 %h %p
+ProxyCommand nc -X 5 -x 127.0.0.1:23456 %h %p
 ServerAliveInterval 30
 然后通过
-ssh user@server.test.com 就可以愉快的使用ss代理登录了。
+ssh user@server.test.com 就可以愉快的使用 Ahri 代理登录了。
 ```
 
 
