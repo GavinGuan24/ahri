@@ -1,8 +1,9 @@
 # Ahri
 
 [Ahri](https://github.com/GavinGuan24/ahri) 是一个好用且便于配置的网络环境共享工具。
-ta 基于 TCP，自行定义了应用层协议来经行流量转发，且对一个 TCP 连接多路复用。
-你可以将它理解为一个 VPN，但 ta 又不是仅是一个 VPN。
+ta 基于 TCP，所以不关心 TCP 层级以上的应用层协议，显而易见 ta 支持 http，也就是理论上说 ta 支持所有基于 TCP 的上层协议。
+ta 有自己的应用层协议来经行流量转发，且在客户端与服务端之间对唯一的一个 TCP 连接进行多路复用，避免不必要的协议握手。
+你可以将它理解为一个 VPN，但 ta 又不是仅是一个 VPN，因为使用 ta，你可以同时使用数个内网环境（含公网服务器的网络环境）。
 
 ## Ahri 的使用场景
 
@@ -30,7 +31,7 @@ ta 基于 TCP，自行定义了应用层协议来经行流量转发，且对一�
 
 Ahri 适用于但不局限于上述场景，ta 可以解决这些问题。
 
-##### 注意: 请严格遵守你所在地区的相关法律法规, 不要将 Ahri 用于违法犯罪行为(尤其是科学上网); 否则后果自负, 毕竟技术无罪.
+**注意: 请严格遵守你所在地区的相关法律法规, 不要将 Ahri 用于违法犯罪行为(尤其是科学上网); 否则后果自负, 毕竟技术无罪, 最坏的情况我会清除源码.**
 
 ## Ahri 的工作原理
 
@@ -118,10 +119,10 @@ ta 由 Ahri Registe Protocol 与 Ahri Frame Protocol 组成。
 # 转发本地请求至服务端
 youtube.com S
 
-# 转发本地请求至另一个客户端
+# 转发本地请求至另一个客户端 B
 mary-live.com B
 
-# 当 ahri-client 为 give 或 trade 模式时, 禁止其他客户端访问该域名
+# 当本 ahri-client 为 give 或 trade 模式时, 禁止其他客户端访问本地网络环境中的域名
 tom-live.com -
 
 # 遇到该域名, 拦截本地请求, 一般用于广告屏蔽
@@ -217,5 +218,33 @@ Parameters:
 至于 Windows，参考 sh 脚本即可编写 bat 即可。
 
 提示：如果 ahri-client 与 ahri-server 之间的网络环境是 **低带宽** 或 **高延迟**，请适当增大 `-T` 参数的值。
+
+## Q & A
+
+我已测试并正常使用该工具多时，有任何意见与建议或者问题，请 open 一个 [issues](https://github.com/GavinGuan24/ahri/issues)。
+
+### ahri-client 的命名
+
+ahri-client 可以使用最长 2 个 ASCII 字符（你就当做两个英文字母好了）来命名自身。同时 'S'， 'L'， '-'， '|' 均是系统保留名，禁止使用。
+为什么最长 2 个字符？Ahri Protocol 制定时决定的。如此，一台服务器已经可以注册 (256^2 - 4) 个客户端。
+
+### 关于其他常用工具的对接 Ahri
+
+对于 ssh， 你可以使用 nc 来对接至 Ahri。
+
+```
+现在本地ss监听代理是 socks5://127.0.0.1:1080
+自己服务器是server.test.com
+
+修改~/.ssh/config 文件
+添加下面配置
+
+host server.test.com
+HostName server.test.com
+ProxyCommand nc -X 5 -x 127.0.0.1:1080 %h %p
+ServerAliveInterval 30
+然后通过
+ssh user@server.test.com 就可以愉快的使用ss代理登录了。
+```
 
 
