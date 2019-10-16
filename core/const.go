@@ -6,7 +6,7 @@ import (
 
 const (
 	// the timeout of a socks5 requester shake with an AhriSocks5Server.
-	Socks5ShakeTimeoutMillisec = 350
+	Socks5ShakeTimeoutMillisec = 400
 	// the timeout of an AhriClient registers itself with an AhriServer.
 	AhriShakeTimeoutSec = 3
 
