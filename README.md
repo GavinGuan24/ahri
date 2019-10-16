@@ -151,7 +151,7 @@ baidu.com L
 
 ## Ahri 的用法
 
-我已经对常用的系统完成了源码编译的工作, 你应该可以在 [releases](https://github.com/GavinGuan24/ahri/releases/tag/v0.9.1) 中找到可运行在你系统上的版本. 如果没有, 请自行从源码编译(go1.12.1+).
+我已经对常用的系统完成了源码编译的工作, 你应该可以在 [releases](https://github.com/GavinGuan24/ahri/releases/tag/v0.9.2) 中找到可运行在你系统上的版本. 如果没有, 请自行从源码编译(go1.12.1+).
 
 详细参数与解释仅需要在命令行下执行对应的帮助程序
 
