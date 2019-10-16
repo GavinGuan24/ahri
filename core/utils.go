@@ -14,6 +14,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func ValidIp(ip string) bool {
@@ -174,6 +175,7 @@ func DecryptAesCfb256(encrypted []byte, aesCipher cipher.Block) (decrypted []byt
 }
 
 func GenerateAes256Key() [32]byte {
+	mrand.Seed(time.Now().UnixNano())
 	var key [32]byte
 	for i := 0; i < 32; i++ {
 		key[i] = byte(mrand.Intn(256))
