@@ -243,6 +243,11 @@ Parameters:
 ahri-client 可以使用最长 2 个 ASCII 字符（你就当做两个英文字母好了）来命名自身。同时 'S'， 'L'， '-'， '|' 均是系统保留名，禁止使用。
 为什么最长 2 个字符？Ahri Protocol 制定时决定的。如此，一台服务器已经可以注册 (256^2 - 4) 个客户端。
 
+### windows 的命令行中无法运行 Ahri 的二进制文件
+
+因为 Ahri 的交叉编译脚本中，默认使用 ahri-client 与 ahri-server 这两个名字命名二进制文件，而 windows 要求可执行文件以 exe 作为后缀名。
+所以，为 ta 们加上 `.exe` 即可。
+
 ### 关于其他常用工具的对接 Ahri
 
 对于 ssh， 你可以使用 nc 来对接至 Ahri。
