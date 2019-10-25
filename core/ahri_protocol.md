@@ -112,7 +112,7 @@ Ahri Client 与 Ahri Server 在 ARP 之后就有了一个可靠的 TCP 连接. �
 |-|protocol flag|frame type|from|to|conn No|payload len|payload|
 |:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 |type / value|0x24|uint8|string|string|uint64|uint16|[ ]byte|
-|byte len|1|1|2|2|8|2|variable<=2032|
+|byte len|1|1|2|2|8|2|variable<= AfpFrameMaxLen - AfpHeaderLen|
 
 
 - protocol flag: AFP header 的标识.
@@ -172,7 +172,7 @@ A -> S('B')          direct
 A <- S('B')          direct
 ```
 
-**from**, **to** 是 1 到 2 个英文字符组成的名字, 作为 Ahri Client Name. 'S', 'L' 为保留名, 禁止使用.
+**from**, **to** 是 1 到 2 个英文字符组成的名字, 作为 Ahri Client Name. 'S', 'L', '|', '-' 为保留名, 禁止使用.
 
 **conn ID** 是由请求的发起者(一个 client)生成的唯一的ID, 用于标识连接, uint64 保证在使用中不会重复(起码用到你生命的终点🤣)
 
