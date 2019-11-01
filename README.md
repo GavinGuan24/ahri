@@ -15,7 +15,19 @@ Ahri 只想做好三件事。
 
 当然，如果你有优化 Ahri 的意见和建议，我很乐意接受。
 
-## Ahri 的特性
+- [Ahri 的特性](#feature)
+- [编写 Ahri 的初衷](#original_intention)
+- [Ahri 的使用场景](#situation)
+- [Ahri 的工作原理](#principle)
+    - [ahri-server & ahri-client](#server_client)
+    - [Ahri Protocal](#ahri_protocal)
+    - [ahri.hosts 示例](#ahri_hosts_examples)
+    - [场景解析](#analysis)
+- [Ahri 的用法](#usage)
+- [Ahri http(s)代理实践](#practice)
+- [Q & A](#Q_A)
+
+## <a id="feature">Ahri 的特性</a>
 
 |特性|详情|
 |:--:|:--|
@@ -32,7 +44,7 @@ Ahri 只想做好三件事。
 - ahri-client 运行在 MacBook Pro <Retina, 13-inch, Early 2015> 乞丐版上。
 - ahri-server 运行在 LA 节点的 Vultr VPS <CentOS 7 x64 5.1.14-1.el7.elrepo.x86_64, CPU 1 vCore, RAM 1GB,> 上。
 
-## 编写 Ahri 的初衷
+## <a id="original_intention">编写 Ahri 的初衷</a>
 
 在工作中，因商务合作需要使用几家合作公司的内网环境，导致我需要频繁切换 VPN 配置。
 而回到家中，如果偶遇突发情况又无法使用自己公司的内网（因为运维不给配）。
@@ -44,7 +56,7 @@ TeamViewer 个人版虽然免费，但时不时会出现服务器宕机的情况
 **注意: 请严格遵守你所在地区的相关法律法规, 不要将 Ahri 用于违法犯罪行为(尤其是科学上网); 否则后果自负, 毕竟技术无罪, 最坏的情况我会清除源码.**
 
  
-## Ahri 的使用场景
+## <a id="situation">Ahri 的使用场景</a>
 
 Ahri 适用于但不局限于以下场景，ta 可以解决这些问题。
 
@@ -64,7 +76,7 @@ TeamViewer 无法连接到公司内网的电脑或使用时及其卡顿。
 
 你所在的网络环境对一些公网域名或 IP 进行了拦截，导致你无法使用它们。
 
-## Ahri 的工作原理
+## <a id="principle">Ahri 的工作原理</a>
 
 Ahri 需要解决的问题其实是流量转发。然而并不是所有的流量都需要转发，或多次转发。
 所以，就请求的发起来说，流量的目的地有三种类型。
@@ -73,7 +85,7 @@ Ahri 需要解决的问题其实是流量转发。然而并不是所有的流量
 2. ahri-server： 使用 ahri-server 作为代理，在 ahri-server 上 dial TCP 请求。
 3. 另一个 ahri-client： 使用另一个 ahri-client 作为代理，在另一个 ahri-client 上 dial TCP 请求。
 
-### ahri-server & ahri-client
+### <a id="server_client">ahri-server & ahri-client</a>
 
 Ahri 服务由两个二进制程序来提供，它们是 ahri-server，ahri-client。
 
@@ -89,7 +101,7 @@ ahri-client 注册到 ahri-server 后，它们之间会有一个内容加密的 
 
 然后再解释上面挖的一个坑，对一个 TCP 连接经行多路复用。
 
-### Ahri Protocol
+### <a id="ahri_protocal">Ahri Protocal</a>
 
 基于 TCP ，Ahri 自行定义了一个应用层协议 [Ahri Protocol](https://github.com/GavinGuan24/ahri/blob/master/core/ahri_protocol.md)。
 ta 由 Ahri Registe Protocol（ARP）与 Ahri Frame Protocol（AFP）组成。
@@ -103,7 +115,7 @@ AFP 定义了 ahri-client 与 ahri-server 应该怎样交互数据包。
 每一个 ahri-client 均有一个 ahri.hosts 文件，可以控制本地请求转发的目的地；也可控制是否对他人提供某些域名或 IP 的转发服务。
 **其中 'S', 'L', '-', '|' 为系统保留名, 禁止使用它们对 ahri-client 命名.**
 
-#### ahri.hosts 示例
+#### <a id="ahri_hosts_examples">ahri.hosts 示例</a>
 
 我们假设自己的客户端名为 'A', 另一个客户端名为 'B', 且均注册至服务端 S, 以下就是 ahri.hosts 文件的示例.
 
@@ -124,7 +136,7 @@ ad-live.com |
 baidu.com L
 ```
 
-### 场景解析
+### <a id="analysis">场景解析</a>
 
 我们回顾一下上面的使用场景。
 假设我本机 ahri-client 是 A，
@@ -160,7 +172,7 @@ A -> Internet 这条路不通了。所以换线为 A -> S -> Internet。
 
 ![示意图](https://github.com/GavinGuan24/ahri/blob/master/img/a0.jpg)
 
-## Ahri 的用法
+## <a id="usage">Ahri 的用法</a>
 
 我已经对常用的系统完成了源码编译的工作, 你应该可以在 [releases](https://github.com/GavinGuan24/ahri/releases/tag/v0.9.2) 中找到可运行在你系统上的版本. 如果没有, 请自行从源码编译(go1.12.1+).
 
@@ -250,7 +262,12 @@ Parameters:
 
 提示：如果 ahri-client 与 ahri-server 之间的网络环境是 **低带宽** 或 **高延迟**，请适当增大 `-T` 参数的值。
 
-## Q & A
+## <a id="practice">Ahri http(s)代理实践</a>
+
+Ahri 其实很简单，但对于不熟悉终端的童鞋还是太难了，那么跟着这个[【实践教程】](https://github.com/GavinGuan24/ahri/blob/master/core/ahri_guide.md)，你可以学习到基础用法。
+
+
+## <a id="Q_A">Q & A</a>
 
 我已测试并正常使用该工具多时，有任何意见与建议或者问题，请 open 一个 [issues](https://github.com/GavinGuan24/ahri/issues)。
 
