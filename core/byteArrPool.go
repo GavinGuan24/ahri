@@ -27,8 +27,11 @@ func (pool *byteArrPool) Get(args ...int) []byte {
 }
 
 func (pool *byteArrPool) Put(arr []byte) {
-	arr = arr[:cap(arr)]
-	pool.Pool.Put(arr)
+	capVal := cap(arr)
+	if capVal >= pool.sizeLimit {
+		arr = arr[:capVal]
+		pool.Pool.Put(arr)
+	}
 }
 
 func NewByteArrPool(sizeLimit int) *byteArrPool {
