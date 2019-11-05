@@ -45,11 +45,11 @@ firewall-cmd --zone=public --add-port=35473/tcp --permanent && firewall-cmd --re
 ```
 cd
 # 下载
-wget "https://github.com/GavinGuan24/ahri/releases/download/v0.9.2/ahri_0.9.2_linux_amd64.tgz"
+wget "https://github.com/GavinGuan24/ahri/releases/download/v0.9.3/ahri_0.9.3_linux_amd64.tgz"
 # 解压
-tar zxf ahri_0.9.2_linux_arm64.tgz
+tar zxf ahri_0.9.3_linux_arm64.tgz
 # 移除无用文件(夹)
-rm -rf ahri_0.9.2_linux_arm64.tgz client
+rm -rf ahri_0.9.3_linux_arm64.tgz client
 ```
 
 现在，/root 下只有 server 一个文件夹
@@ -95,7 +95,7 @@ writing RSA key
 ```
 tail a.log
 # 输出
-Ahri Server (0.9.2) is running.
+Ahri Server (0.9.3) is running.
 ```
 
 停止 ahri-server，也可以直接调用脚本
@@ -112,16 +112,16 @@ Ahri Server (0.9.2) is running.
 
 首先是 B端，公司电脑一般都是 Windows 10(64位)，我们以此为例。
 
-下载 [Windows 64位](https://github.com/GavinGuan24/ahri/releases/download/v0.9.2/ahri_0.9.2_windows_amd64.tgz) 的压缩包。
+下载 [Windows 64位](https://github.com/GavinGuan24/ahri/releases/download/v0.9.3/ahri_0.9.3_windows_amd64.tgz) 的压缩包。
 
 Windows 多的是图形化的工具，所以关于 tar.gz（tgz） 的解压请自行解决，GUI 软件建议使用 7-zip。
 如果你用的是 Win 10，在 cmd 中即可完成解压
 ```
 # 这里我将文件保存在在桌面，所以先 cd 到 Desktop
 cd Desktop
-tar -zxf ahri_0.9.2_windows_amd64.tgz
+tar -zxf ahri_0.9.3_windows_amd64.tgz
 rd /s/q server
-del ahri_0.9.2_windows_amd64.tgz
+del ahri_0.9.3_windows_amd64.tgz
 ```
 解压后，只有 client 文件夹下的文件是我们需要的。
 先将 ahri-client 加上后缀以符合 Windows 的规范。
@@ -163,7 +163,7 @@ tasklist | findstr ahri-client.exe
 taskkill /F /T /PID 3320
 ```
 
-如果启动成功，可以看到 a.log 中的日志 `Ahri Client (0.9.2) is running.`
+如果启动成功，可以看到 a.log 中的日志 `Ahri Client (0.9.3) is running.`
 如果在 ahri-server 中注册成功，可以看到相关日志 `Get Client` 之类的。
 
 如果你用的是 linux 或 MacBook， 那你可以直接修改脚本 `start.sh` 来使用 ahri-client。

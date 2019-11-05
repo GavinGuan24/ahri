@@ -35,14 +35,14 @@ Ahri 只想做好三件事。
 |帧化数据协议|Ahri 拥有自己的应用层协议（Ahri protocol）来经行流量转发。Ahri 对流量的处理方式类似于 http 2.0，所有的数据均是 **帧化** 的。|
 |安全|Ahri 采用了 **RSA**, **AES-256-CFB** 加密算法保证数据的安全性。|
 |高效|Ahri 由 golang 编写，本身非常底层，执行效率极高。同时，Ahri 采用 **多路复用** 模式，在 client 与 server 之间仅建立一个 TCP 连接，避免不必要的协议握手。|
-|低内存|采用 **sync.pool** 降低 GC 压力与内存占用量。* ahri-client 活跃时，内存占用在 7MB 以下。* ahri-server 活跃时，内存占用在 90MB 以下。|
+|低内存, 低 CPU 使用率|采用 **sync.pool** 降低 GC 压力与内存占用量。* ahri-client 活跃时，MEM < 7.0MB，%CPU ~= 10%，%CPU max < 15.0% 。* ahri-server 活跃时，MEM < 15.0MB，%CPU ~ 1.5%，%CPU max < 2.1%。|
 |跨平台|Ahri 由 golang 编写，轻松跨平台；|
 
 *最简模型下的内存测试环境与情景：
 
-- 在中国大陆访问多个 YouTube 1080p 视频。
+- 在中国大陆连续访问数个 YouTube 1080p 视频播放页（即，当视频开始播放时，马上点击下一个视频地址，使机器保持数个持续的大流量的网络访问）。
 - ahri-client 运行在 MacBook Pro <Retina, 13-inch, Early 2015> 乞丐版上。
-- ahri-server 运行在 LA 节点的 Vultr VPS <CentOS 7 x64 5.1.14-1.el7.elrepo.x86_64, CPU 1 vCore, RAM 1GB,> 上。
+- ahri-server 运行在 Vultr 的 LA 节点的 VPS 上 <CentOS 7 x64 5.1.14-1.el7.elrepo.x86_64, CPU 1 vCore, RAM 1GB,> 。
 
 ## <a id="original_intention">编写 Ahri 的初衷</a>
 
@@ -174,7 +174,7 @@ A -> Internet 这条路不通了。所以换线为 A -> S -> Internet。
 
 ## <a id="usage">Ahri 的用法</a>
 
-我已经对常用的系统完成了源码编译的工作, 你应该可以在 [releases](https://github.com/GavinGuan24/ahri/releases/tag/v0.9.2) 中找到可运行在你系统上的版本. 如果没有, 请自行从源码编译(go1.12.1+).
+我已经对常用的系统完成了源码编译的工作, 你应该可以在 [releases](https://github.com/GavinGuan24/ahri/releases/tag/v0.9.3) 中找到可运行在你系统上的版本. 如果没有, 请自行从源码编译(go1.12.1+).
 
 详细参数与解释仅需要在命令行下执行对应的帮助程序（**因为 windows 的限制，需要将 ahri-client 与 ahri-server 先重命名为 ahri-client.exe 与 ahri-server.exe**）
 

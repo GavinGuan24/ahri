@@ -49,7 +49,7 @@ func (client *AhriClient) loopStarter() {
 			select {
 			case frame := <-client.receiveFrameTruck:
 				client.dispatcher(frame)
-			case <-time.After(time.Microsecond):
+			case <-time.After(100*time.Millisecond):
 				if client.quitFlag && client.receiverLoopStop {
 					goto loopEnd
 				}
