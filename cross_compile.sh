@@ -18,6 +18,7 @@ function build() {
   echo "[Building] OS: $1 , ARCH: $2"
   cd ./product/client
   CGO_ENABLED=0 GOOS=$1 GOARCH=$2 go build -o ahri-client
+  sleep 0.01
   mkdir ../../releases/client
   mv ./ahri-client ../../releases/client
   cp ./ahri.hosts ../../releases/client
@@ -28,6 +29,7 @@ function build() {
 
   cd ./product/server
   CGO_ENABLED=0 GOOS=$1 GOARCH=$2 go build -o ahri-server
+  sleep 0.01
   mkdir ../../releases/server
   mv ./ahri-server ../../releases/server
   cp ./gen_rsa_keys.sh ../../releases/server
