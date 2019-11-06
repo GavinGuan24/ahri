@@ -60,6 +60,8 @@ const (
 	// ignore errors
 	IgnoreErrorSendOnClosedChannel  = "send on closed channel"
 	IgnoreErrorInvalidMemoryAddress = "runtime error: invalid memory address or nil pointer dereference"
+	IgnoreErrorSliceBoundsOutOfRange = "runtime error: slice bounds out of range"
+	IgnoreErrorInvalidBufferOverlap= "crypto/cipher: invalid buffer overlap"
 )
 
 var (

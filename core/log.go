@@ -146,15 +146,15 @@ func (a *Alog) logout(level LogLevel, msg string) {
 
 	if isStderr {
 		stackBytes := debug.Stack()
-		newlineFlag := 0
-		for i := 0; i < len(stackBytes); i++ {
-			if stackBytes[i] == '\n' {
-				newlineFlag++
-			}
-			if newlineFlag == 7 {
-				stackBytes = stackBytes[i+1:]
-			}
-		}
+		//newlineFlag := 0
+		//for i := 0; i < len(stackBytes); i++ {
+		//	if stackBytes[i] == '\n' {
+		//		newlineFlag++
+		//	}
+		//	if newlineFlag == 7 {
+		//		stackBytes = stackBytes[i+1:]
+		//	}
+		//}
 		buf.WriteByte('\n')
 		buf.Write(stackBytes)
 		fmt.Fprintln(os.Stderr, buf.String())

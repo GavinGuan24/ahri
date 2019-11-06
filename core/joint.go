@@ -36,10 +36,19 @@ func readDataFromConn(connId uint64, conn net.Conn) chan *buffer {
 				if err, ok := unknownError.(error); ok {
 					errMsg := err.Error()
 					switch errMsg {
-					case IgnoreErrorSendOnClosedChannel, IgnoreErrorInvalidMemoryAddress:
+					case
+						IgnoreErrorSendOnClosedChannel,
+						IgnoreErrorInvalidMemoryAddress,
+						IgnoreErrorSliceBoundsOutOfRange:
 						return
 					}
 					Log.Errorf("Unknown Error: %s", errMsg)
+				} else if errStr, ok := unknownError.(string); ok {
+					switch errStr {
+					case IgnoreErrorInvalidBufferOverlap:
+						return
+					}
+					Log.Errorf("Unknown Error: %s", errStr)
 				} else {
 					Log.Errorf("Unknown Error(%v): %v", reflect.TypeOf(unknownError), unknownError)
 				}
@@ -86,10 +95,19 @@ func connJoint(connId uint64, tcpConn *net.TCPConn, ahriConn *AhriConn) {
 			if err, ok := unknownError.(error); ok {
 				errMsg := err.Error()
 				switch errMsg {
-				case IgnoreErrorSendOnClosedChannel, IgnoreErrorInvalidMemoryAddress:
+				case
+					IgnoreErrorSendOnClosedChannel,
+					IgnoreErrorInvalidMemoryAddress,
+					IgnoreErrorSliceBoundsOutOfRange:
 					return
 				}
 				Log.Errorf("Unknown Error: %s", errMsg)
+			} else if errStr, ok := unknownError.(string); ok {
+				switch errStr {
+				case IgnoreErrorInvalidBufferOverlap:
+					return
+				}
+				Log.Errorf("Unknown Error: %s", errStr)
 			} else {
 				Log.Errorf("Unknown Error(%v): %v", reflect.TypeOf(unknownError), unknownError)
 			}

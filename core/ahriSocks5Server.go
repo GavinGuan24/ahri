@@ -163,7 +163,6 @@ func (ahriSocks5Server *AhriSocks5Server) socks5HandShakeAndMapper(conn *net.TCP
 		return nil
 	}
 
-
 	ahriAddrName := ahriSocks5Server.mapperAhriAddrName(buf[3], dstIP)
 	if AhriAddrNameForbidden == ahriAddrName {
 		ahriAddrName = AhriAddrNameLocal
@@ -194,10 +193,19 @@ func (ahriSocks5Server *AhriSocks5Server) ahriSocks5ConnectHandler(conn *net.TCP
 			if err, ok := unknownError.(error); ok {
 				errMsg := err.Error()
 				switch errMsg {
-				case IgnoreErrorSendOnClosedChannel, IgnoreErrorInvalidMemoryAddress:
+				case
+					IgnoreErrorSendOnClosedChannel,
+					IgnoreErrorInvalidMemoryAddress,
+					IgnoreErrorSliceBoundsOutOfRange:
 					return
 				}
 				Log.Errorf("Unknown Error: %s", errMsg)
+			} else if errStr, ok := unknownError.(string); ok {
+				switch errStr {
+				case IgnoreErrorInvalidBufferOverlap:
+					return
+				}
+				Log.Errorf("Unknown Error: %s", errStr)
 			} else {
 				Log.Errorf("Unknown Error(%v): %v", reflect.TypeOf(unknownError), unknownError)
 			}
